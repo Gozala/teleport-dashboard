@@ -1,8 +1,8 @@
-# {{name}} #
+# teleport-dashboard #
 
-{{description}}
+Teleport dashboard
 
 ## Install ##
 
-    npm install {{name}}
+    npm install teleport-dashboard
 
