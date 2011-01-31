@@ -1,5 +1,5 @@
 { "name": "teleport-dashboard"
-, "version": "0.0.3"
+, "version": "0.0.4"
 , "description": "Teleport dashboard"
 , "homepage": "http://github.com/Gozala/teleport-dashboard/"
 , "keywords": ["teleport", "dashboard", "packages", "dependencies"]
