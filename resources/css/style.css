@@ -139,6 +139,7 @@ article:target, article.visible {
 #packages {
   font-family: 'Helvetiva Neue', Helvetica, Arial, sans-serif;
   position: absolute;
+  z-index: 2;
   margin: 0 0 0 -42px;
   padding: 0 0 50px 0;
 }
@@ -212,15 +213,53 @@ article:target, article.visible {
 
 
 #package-details {
+  z-index: 1;
   position: fixed;
-  left: 45%;
-  width: 50%;
+  top: 10px;
+  left: 30%;
+  padding-right: 5px;
+}
+
+#package-details .description {
+  padding-right: 100px;
+}
+
+#package-details .modules {
+  display: inline-block;
 }
 
 #package-details .module {
+  font-size: 11px;
+  font-family: Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", monospace;
   border-radius: 8px;
   padding: 0px 3px 0px 3px;
-  margin: 3px;
-  color: white;
-  background: rgba(255, 255, 255, 0.2);
+  white-space: pre;
+}
+a.module {
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  text-decoration: none;
+  background: #333333;
+  color: #cccccc;
+}
+a.module:hover {
+  color: black;
+  background: white;
+}
+
+.tag {
+  white-space: pre;
+  line-height: 12px;
+  background: #999;
+  color: black;
+  font-size: 11px;
+  padding: 2px 3px 1px 3px;
+  margin: 0 5px 0px 0;
+  border-radius: 30px 0px 0px 30px;
+  -moz-border-radius: 30px 0px 0px 30px;
+}
+.tag:before {
+  line-height: 14px;
+  content: "● ";
+  color: #242829;
 }
