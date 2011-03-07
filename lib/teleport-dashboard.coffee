@@ -1,10 +1,8 @@
 'use strict'
 
 http = require 'promised-http'
-markdown = require 'markdown-js'
-{ when: When } = require 'q'
 mustache = require 'mustache'
-{ _ } = require 'underscore'
+{ when: When } = require 'q'
 { Model, View, Controller, Collection } = backbone = require 'backbone'
 
 ###
@@ -47,11 +45,19 @@ exports.PackageModel = class PackageModel extends Model
     @destroy()
     @view.remove()
 
-exports.AppModel = class AppModel extends Collection
+exports.AppModel = class AppModel extends Model
+  selected: null
+  initialize: () ->
+    @packages = new Packages
+    @packages.fetch()
+  clear: () ->
+    @destroy()
+    @view.remove()
+
+exports.Packages = class Packages extends Collection
   model: PackageModel
   url: '../registry.json'
   # Selected package model
-  selected: null
   parse: (content) ->
     packages = JSON.parse content
     for name, { overlay: { teleport: metadata } } of packages
@@ -109,9 +115,10 @@ exports.PackageDetailsView = class PackageDetailsView extends View
               <a href="#package/{{name}}/{{src}}" class="module fixed">{{id}}</a>
             {{/modulesTemplate}}</div>
             '''
-  render: ({ model }) ->
-    @model = model or @model
-    @el.innerHTML = mustache.to_html @template, @model.toJSON()
+  initialize: () ->
+    @model.bind 'change:selected', @render
+  render: () =>
+    @el.innerHTML = mustache.to_html @template, @model.get('selected').toJSON()
     @
   clear: () -> @el.innerHTML = ''
 
@@ -120,8 +127,8 @@ exports.AppView = class AppView extends View
   infoView: null
   initialize: (options) ->
     @infoView = new PackageDetailsView model: @model
-    @model.bind 'add', @add
-    @model.bind 'refresh', @refresh
+    @model.packages.bind 'add', @add
+    @model.packages.bind 'refresh', @refresh
   add: (model) =>
     try
       view = new PackageView model: model
@@ -129,7 +136,7 @@ exports.AppView = class AppView extends View
     catch exception
       console.error exception
   refresh: () =>
-    @add packageModel for packageModel in @model.models
+    @add packageModel for packageModel in @model.packages.models
     backbone.history.loadUrl()
 
 exports.AppController = class AppController extends Controller
@@ -138,12 +145,10 @@ exports.AppController = class AppController extends Controller
     'package/:name/:id': 'select'
   initialize: () ->
     @view = new AppView(model: @model = new AppModel)
-    @model.fetch()
     backbone.history.start()
   select: (name, id) ->
-    if name and (model = @model.get name) and model isnt @model.selected
-      @view.infoView.render model: model
-
+    if name and (model = @model.packages.get name) and model isnt @model.selected
+      @model.set selected: model
     id = decodeURIComponent(id) if id
     if id
       console.log id
